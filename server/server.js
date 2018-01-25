@@ -15,16 +15,21 @@ app.use(express.static(publicPath));
 io.on("connection", (socket) => {
     console.log("new user connected");
 
-    socket.emit("newChat", {
-        from: "chima",
-        text: "Hay, Whats is going on",
-        date: 12345
+    // socket.emit("newChat", {
+    //     from: "chima",
+    //     text: "Hay, Whats is going on",
+    //     date: 12345
 
-    });
+    // });
 
 
     socket.on("receiveChat", (newChat) => {
         console.log(newChat);
+        io.emit("newMessage", {
+            from: newChat.from,
+            text: newChat.text,
+            createdAt: new Date().getTime()
+        });
     });
 
     socket.on("disconnect", () => {
