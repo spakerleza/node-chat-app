@@ -22,14 +22,38 @@ io.on("connection", (socket) => {
 
     // });
 
+    socket.emit("newConnection", {
+        from: "Admin",
+        message: "Welcome to our chart application",
+        createdAt: new Date().getTime()
+    });
+
+    socket.broadcast.emit("newConnection", {
+        from: "Admin",
+        message: "New user joined",
+        createdAt: new Date().getTime()
+    });
+
 
     socket.on("receiveChat", (newChat) => {
         console.log(newChat);
+        // This type of emit send messasge to every one that is connected to the server
+        // Including the user that sent it
+
         io.emit("newMessage", {
             from: newChat.from,
             text: newChat.text,
             createdAt: new Date().getTime()
         });
+
+        // This type of emit send messasge to every one that is connected to the server
+        // Except the user that sent it
+
+        // socket.broadcast.emit("newMessage", {
+        //     from: newChat.from,
+        //     text: newChat.text,
+        //     createdAt: new Date().getTime()
+        // });
     });
 
     socket.on("disconnect", () => {
