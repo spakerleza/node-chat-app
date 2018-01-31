@@ -10,55 +10,27 @@ var app = express();
 var server = http.createServer(app);
 var io = socketIO(server);
 
+var {generateMessage, generateLocation} = require("./utils/message");
+
 app.use(express.static(publicPath));
 
 io.on("connection", (socket) => {
     console.log("new user connected");
 
-    // socket.emit("newChat", {
-    //     from: "chima",
-    //     text: "Hay, Whats is going on",
-    //     date: 12345
+    socket.emit("newMessage", generateMessage("Admin", "Welcome to our chart application"));
 
-    // });
-
-    socket.emit("newMessage", {
-        from: "Admin",
-        text: "Welcome to our chart application",
-        createdAt: new Date().getTime()
-    });
-
-    socket.broadcast.emit("newMessage", {
-        from: "Admin",
-        text: "New user joined",
-        createdAt: new Date().getTime()
-    });
-
+    socket.broadcast.emit("newMessage", generateMessage("Admin", "New user joined"));
 
     socket.on("receiveChat", (newChat, callback) => {
-        // This type of emit send messasge to every one that is connected to the server
-        // Including the user that sent it
-        console.log(newChat);
-        io.emit("newMessage", {
-            from: newChat.from,
-            text: newChat.text,
-            createdAt: new Date().getTime()
-        });
-        
+        io.emit("newMessage", generateMessage(newChat.from, newChat.text));
         callback("This is from the server");
-        // This type of emit send messasge to every one that is connected to the server
-        // Except the user that sent it
-        
-        // socket.broadcast.emit("createMessage", {
-        //     from: newChat.from,
-        //     text: newChat.text,
-        //     createdAt: new Date().getTime()
-        // });
     });
 
-    // socket.on("createMessage", (message) => {
-    //     console.log(message);
-    // });
+
+    socket.on("createLocationMessage", (location) => {
+        io.emit("newLocation", generateLocation("Admin", location.latitude, location.longitude));
+    });
+
 
     socket.on("disconnect", () => {
         console.log("user has been disconnected from the server");
