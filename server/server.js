@@ -23,7 +23,7 @@ io.on("connection", (socket) => {
 
     socket.on("receiveChat", (newChat, callback) => {
         io.emit("newMessage", generateMessage(newChat.from, newChat.text));
-        callback("This is from the server");
+        callback("");
     });
 
 
