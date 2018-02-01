@@ -1,5 +1,23 @@
 var socket = io();
 
+function scrollToBottom() {
+    var messages = $("#messages");
+    var newMessage = messages.children("li:last-child");
+     
+    var clientHeight = messages.prop("clientHeight");
+    var scrollTop    = messages.prop("scrollTop");
+    var scrollHeight  = messages.prop("scrollHeight");
+    var newMessageHeight = newMessage.innerHeight();
+    var lastMessageHeight = newMessage.prev().innerHeight();
+
+
+    if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight  >= scrollHeight) {
+        console.log("should scroll");
+        messages.scrollTop(scrollHeight);
+    }
+
+}
+
 socket.on("connect", function(){
     // console.log("connected to server");
     
@@ -23,6 +41,7 @@ socket.on("newMessage", function(email) {
         createdAt : time
     });
     $("#messages").append(html);
+    scrollToBottom();
     // var time = moment(email.createdAt).format("h:mm a");
     // var li = $("<li></li>");
     // li.text(`${email.from} ${time}: ${email.text}`);
@@ -42,6 +61,7 @@ socket.on("newLocation", function(message) {
         createdAt : time
     });
     $("#messages").append(html);
+    scrollToBottom();
 
     locationBtn.removeAttr("disabled").text("Send Location");
 
