@@ -15,29 +15,44 @@ socket.on("newMessage", function(message){
 
 
 socket.on("newMessage", function(email) {
+    var template = $("#message-template").html();
     var time = moment(email.createdAt).format("h:mm a");
-    var li = $("<li></li>");
-    li.text(`${email.from} ${time}: ${email.text}`);
+    var html = Mustache.render(template, {
+        text : email.text,
+        from : email.from,
+        createdAt : time
+    });
+    $("#messages").append(html);
+    // var time = moment(email.createdAt).format("h:mm a");
+    // var li = $("<li></li>");
+    // li.text(`${email.from} ${time}: ${email.text}`);
 
-    $("#messages").append(li);
+    // $("#messages").append(li);
 });
 
 var locationBtn = $("#send-location");
 
 socket.on("newLocation", function(message) {
 
-    var time = moment(email.createdAt).format("h:mm a");
-
-    var li = $("<li></li>");
-    var a = $("<a target='_blank'>My current location</a>");
-    
-    li.text(`${message.from} ${time}: `);
-    a.attr("href", `${message.url}`);
-    li.append(a);
-
-    $("#messages").append(li);
+    var time = moment(message.createdAt).format("h:mm a");
+    var template = $("#location-template").html();
+    var html = Mustache.render(template, {
+        from : message.from,
+        url : message.url,
+        createdAt : time
+    });
+    $("#messages").append(html);
 
     locationBtn.removeAttr("disabled").text("Send Location");
+
+    // var li = $("<li></li>");
+    // var a = $("<a target='_blank'>My current location</a>");
+    
+    // li.text(`${message.from} ${time}: `);
+    // a.attr("href", `${message.url}`);
+    // li.append(a);
+
+    // $("#messages").append(li);
 });
 
 // socket.emit("receiveChat", {
